@@ -3,11 +3,18 @@ import LoginVue from "../views/Login.vue";
 import AbsenVue from "../views/Absen.vue";
 const routes = [
     {
-        path:'', component: LoginVue,
-       
+        path:'',
+        name: 'Login',
+        component: LoginVue,
+        
     },
     {
-        path:'/absen', component: AbsenVue
+        path:'/absen',
+        name: 'Absen',
+        component: AbsenVue,
+        meta: {
+            requiresAuth: true
+        }
     }
 ]
 
@@ -15,5 +22,34 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 })
+
+const isAuthenticated = true;
+router.beforeEach((to, from, next) => {
+    if (to.meta.requiresAuth) {
+        const token = localStorage.getItem('Token');
+        console.log(token);
+        if (!token) {
+            // Token tidak ada, navigasikan ke halaman 'Login'
+            next({ name: 'Login' });
+        } else {
+            // Token ada, navigasikan ke halaman 'Absen'
+            next();
+        }
+        
+    } else if (to.name === 'Login') {
+        // Jika pengguna mencoba mengakses halaman 'Login' ketika sudah memiliki token,
+        // alihkan mereka ke halaman lain (misalnya, 'Absen')
+        const token = localStorage.getItem('Token');
+        if (token) {
+            next({ name: 'Absen' });
+        } else {
+            next();
+        }
+    } else {
+        // Jika halaman tidak memerlukan otentikasi, lanjutkan
+        next();
+    }
+});
+
 
 export default router
