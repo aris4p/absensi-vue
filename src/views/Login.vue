@@ -42,8 +42,9 @@
 
 <script>
 import apiClient from '../axios/api.js'
+import Swal from 'sweetalert2';
 export default {
-	
+
 	
 	data() {
 		return {
@@ -58,15 +59,25 @@ export default {
 			apiClient.post('/login', this.credentials)
 			.then(response => {
 				//login berhasil
-				console.log(response.data);
+				
 				localStorage.setItem('Token', response.data.token);
 				//redirect to
-				  // Melempar pengguna ke halaman login menggunakan Vue Router
-				  this.$router.push({ name: 'Absen' });
+				Swal.fire(
+				'Success!',
+				'Login Berhasil!',
+				'success'
+				)
+				// Melempar pengguna ke halaman login menggunakan Vue Router
+				this.$router.push({ name: 'Absen' });
 			})
 			.catch(error => {
 				//login gagal
-				console.error(error.response.data);
+				Swal.fire({
+					icon: 'error',
+					title: 'Oops...',
+					text: error.response.data.message,
+				})
+				// console.error(error.response.data);
 			});
 		},
 	},

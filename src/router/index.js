@@ -27,7 +27,7 @@ const isAuthenticated = true;
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('Token');
-        console.log(token);
+       
         if (!token) {
             // Token tidak ada, navigasikan ke halaman 'Login'
             next({ name: 'Login' });
