@@ -9,14 +9,16 @@
                     <img src="src/assets/images/finger.png" alt="finger" style="width: 50%;">
                 </span>
                 
-                <span class="welcome-warn">Anda Belum checkin</span>
-                <span class="welcome p-b-48">Selamat Datang</span>
-                <span class="username">{{ userName.nama_karyawan }} {{ getUserLogin() }}</span>
+                <span class="welcome-warn" v-if="masuk === null">Anda Belum Check-In</span>
+                <span class="welcome-success" v-else>Anda sudah checkin.</span>
+                
+                <span class="welcome p-b-48">Selamat datang</span>
+                <span class="username">{{ userName.nama_karyawan }}</span>
                 <div class="checkin">
-                    <button @click="checkIn()" :disabled="jam_masuk !== null" class="masuk" role="button" >Check-In</button>
+                    <button @click="checkIn()" :disabled="masuk !== null" class="masuk" role="button">Check-In</button>
                 </div>
                 <div class="checkout">
-                    <button @click="checkOut()" :disabled="jam_keluar !== null" class="keluar" role="button" >Check-Out</button>
+                    <button @click="checkOut()" :disabled="keluar !== null" class="keluar" role="button" >Check-Out</button>
                 </div>
                 <div class="footer">
                     <button  @click="logout()" class="logout-button">Logout</button>
@@ -49,10 +51,11 @@ export default{
                 _method: 'patch'
             },
             
-            id_karyawan: this.getUserLogin(),
+            idKaryawan: '',
             
-            jam_masuk: '',
-            jam_keluar: '',
+            masuk: null,
+            keluar: null,
+            
             
         }
     },
@@ -93,37 +96,28 @@ export default{
             };
             
             try {
-                const response = await apiClient.get('/user', { headers });
-                this.userName = response.data.data;
-                this.checkin.karyawan_id = response.data.data.id_karyawan;
-                this.checkout.karyawan_id = response.data.data.id_karyawan;
-                return 'PG001';
+                // Mendapatkan data pengguna dari endpoint '/user'
+                const userResponse = await apiClient.get('/user', { headers });
+                const userData = userResponse.data.data;
+                
+                // Mengatur properti userName dan ID karyawan
+                this.userName = userData;
+                const karyawanID = userData.id_karyawan;
+                this.checkin.karyawan_id = karyawanID;
+                this.checkout.karyawan_id = karyawanID;
+                
+                // Mendapatkan data absensi berdasarkan ID karyawan
+                const absensiResponse = await apiClient.get(`/absensi/${karyawanID}`, { headers });
+                const jam = absensiResponse.data.data;
+                this.idKaryawan = jam;
+                this.masuk = jam.jam_masuk;
+                this.keluar = jam.jam_keluar;
             } catch (err) {
                 console.log(err.response.data);
             }
         },
         
-        getUserAbsen(){
-            const id_karyawan = this.checkin.karyawan_id;
-            const headers = {
-                Authorization: `Bearer ${this.token}`
-            };
-            
-            
-            
-            apiClient.get("/absensi/"+this.checkin.karyawan_id, { headers })
-            .then(response =>{
-                
-                
-                this.jam_masuk = response.data.data;
-                console.log(this.checkin.karyawan_id);
-                this.jam_keluar = response.data.data.jam_keluar;
-                console.log(response.data.data.jam_keluar);
-            })
-            .catch(err =>{
-                
-            })
-        },
+        
         checkIn(){
             const headers = {
                 Authorization: `Bearer ${this.token}`
@@ -136,35 +130,46 @@ export default{
                 'Success!',
                 response.data.message,
                 'success'
-                );
+                ).then(() => {
+                    // Me-refresh halaman setelah tombol "OK" pada Swal.fire diklik
+                    location.reload();
+                });
             })
             .catch(err =>{
                 console.log(err.response.data);
             })
         },
-        checkOut(){
+        checkOut() {
             const headers = {
                 Authorization: `Bearer ${this.token}`
             };
             
-            apiClient.post('/absensi', this.checkout, {headers})
-            .then(response =>{
-                
+            apiClient.post('/absensi', this.checkout, { headers })
+            .then(response => {
                 Swal.fire(
                 'Success!',
                 response.data.message,
                 'success'
-                );
+                ).then(() => {
+                    // Me-refresh halaman setelah tombol "OK" pada Swal.fire diklik
+                    location.reload();
+                });
             })
-            .catch(err =>{
+            .catch(err => {
                 console.log(err.response.data);
             })
         },
+        
     },
-    mounted() {
-        this.getUserLogin(); // Panggil method getUserLogin() saat komponen dimuat
-        this.getUserAbsen(); // Panggil method getUserLogin() saat komponen dimuat
-    },
-};
-
-</script>
+    // computed: {
+        //     checkAbsen(){
+            //         return this.jam_masuk !== null ? '' : 'Anda Belum Check-In';
+            //     },
+            // },
+            mounted() {
+                this.getUserLogin(); // Panggil method getUserLogin() saat komponen dimuat
+                // this.getUserAbsen(); // Panggil method getUserLogin() saat komponen dimuat
+            },
+        };
+        
+    </script>

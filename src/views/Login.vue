@@ -1,4 +1,3 @@
-
 <template>
 	<div class="limiter">
 		<div class="container-login100">
@@ -12,7 +11,7 @@
 					</span>
 					
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is: a@b.c">
-						<input class="input100" type="text" name="email" v-model="credentials.email">
+						<input class="input100" type="text" name="email" v-model="credentials.email" :class="{ 'has-val': credentials.email }">
 						<span class="focus-input100" data-placeholder="Email"></span>
 					</div>
 					
@@ -20,7 +19,7 @@
 						<span class="btn-show-pass">
 							<i class="zmdi zmdi-eye"></i>
 						</span>
-						<input class="input100" type="password" name="pass" v-model="credentials.password">
+						<input class="input100" type="password" name="pass" v-model="credentials.password" :class="{ 'has-val': credentials.password }">
 						<span class="focus-input100" data-placeholder="Password"></span>
 					</div>
 					
@@ -43,8 +42,9 @@
 <script>
 import apiClient from '../axios/api.js'
 import Swal from 'sweetalert2';
-export default {
 
+export default {
+	
 	
 	data() {
 		return {
@@ -52,6 +52,7 @@ export default {
 				email: '',
 				password: '',
 			},
+			title: 'Login',
 		};
 	},
 	methods: {

@@ -25,6 +25,7 @@ const router = createRouter({
 
 const isAuthenticated = true;
 router.beforeEach((to, from, next) => {
+    document.title = to.name;
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('Token');
        

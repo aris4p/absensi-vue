@@ -7,6 +7,8 @@ import './assets/fonts/iconic/css/material-design-iconic-font.min.css'
 import './assets/vendor/animate/animate.css'
 import './assets/vendor/css-hamburgers/hamburgers.min.css'
 
+
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
