@@ -8,7 +8,7 @@
 						Absensi
 					</span>
 					<span class="login100-form-title p-b-48">
-						<img src="src/assets/images/finger.png" alt="finger" style="width: 50%;">
+						<img src="@/assets/images/finger.png" alt="finger" style="width: 50%;">
 					</span>
 
 					<div class="wrap-input100 validate-input" data-validate = "Valid email is: a@b.c">
