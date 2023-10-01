@@ -6,7 +6,7 @@
                     Absensi
                 </span>
                 <span class="login100-form-title ">
-                    <img src="src/assets/images/finger.png" alt="finger" style="width: 50%;">
+                    <img src="@/assets/images/finger.png" alt="finger" style="width: 50%;">
                 </span>
                 
                 <span class="welcome-warn" v-if="masuk === null">Anda Belum Check-In</span>
